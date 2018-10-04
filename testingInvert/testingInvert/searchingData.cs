@@ -18,7 +18,7 @@ namespace testingInvert
 
         public searchingData()
         {
-            docArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\cacm.all").ToArray();
+            docArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\titlesAndAbstracts.txt").ToArray();
             dictionaryArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\dictionary.txt").ToArray();
             postingArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\postings.txt").ToArray();
 
@@ -36,50 +36,16 @@ namespace testingInvert
         {
             List<docInfoHolder> finalList = new List<docInfoHolder>();
             string[] infoArray = postingArray[termID].Split('|');
-            string[] postBreakdown;
-            int startOfDocument;
+            string[] postingBreakdown, titleAndAbstractBreakdown;
+            int docID;
             for(int i = 0; i < infoArray.Length-1; i++)
             {
-                postBreakdown = infoArray[i].Split('\t');
-                startOfDocument = documentSearcher(postBreakdown[0]);
-                finalList.Add(new docInfoHolder(postBreakdown[0], titleFinder(startOfDocument), postBreakdown[1], postBreakdown[2], abstractFinder(startOfDocument)));
+                postingBreakdown = infoArray[i].Split('\t');
+                docID = Convert.ToInt32(postingBreakdown[0]) - 1;
+                titleAndAbstractBreakdown = docArray[docID].Split('\t');
+                finalList.Add(new docInfoHolder(postingBreakdown[0], titleAndAbstractBreakdown[1], postingBreakdown[1], postingBreakdown[2], titleAndAbstractBreakdown[2]));
             }
             return finalList;
-        }
-        private string titleFinder(int i)
-        {
-            Regex r = new Regex(".T");
-            for (int j = i; j < docArray.Length; j++)
-            {
-                if (r.IsMatch(docArray[j])) return docArray[j + 1];
-                if (docArray[j].Substring(0, 2) == ".I") break;
-            }
-            return "No Title Found";
-        }
-        private int documentSearcher(string docID)
-        {
-            Regex r = new Regex(".I " + docID);
-            for (int i = 0; i < docArray.Length; i++) { if (r.IsMatch(docArray[i])) return i; }
-            return 0;
-        }
-        private string abstractFinder(int i)
-        {
-            int j, k;
-            string fullAbstract = "No Abstract Found";
-            Regex r = new Regex(".W");
-            for (j = i; j < docArray.Length; j++)
-            {
-                if (r.IsMatch(docArray[j])) break;
-                if (docArray[j].Substring(0, 2) == ".I") return fullAbstract;
-            }
-            fullAbstract = "";
-            r = new Regex("^.[ATBNXWKI]$");
-            for (k = j; k < docArray.Length; k++)
-            {
-                if (r.IsMatch(docArray[k])) break;
-                fullAbstract = fullAbstract + " " + docArray[k];
-            }
-            return fullAbstract;
         }
     }
 }

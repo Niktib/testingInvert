@@ -46,6 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnswerBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AnswerBox.Designer.cs">
+      <DependentUpon>AnswerBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="docInfoHolder.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -56,6 +62,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="searchingData.cs" />
+    <EmbeddedResource Include="AnswerBox.resx">
+      <DependentUpon>AnswerBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

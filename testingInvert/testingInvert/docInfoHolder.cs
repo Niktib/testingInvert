@@ -37,6 +37,7 @@ namespace testingInvert
                 positions[0] = Convert.ToInt32(_positions)-1;
             }
             fullAbstract = _fullAbstract.Split(' ');
+            abstractToSummary();
         }
         private void abstractToSummary()
         {
@@ -58,7 +59,7 @@ namespace testingInvert
 
         public string printOut()
         {
-            return String.Format("Document ID: {0}\nDocument Title: {1}\nTerm Frequency: {2}\nPositions in Document: {3}\nSummary in Document: {4}\n",docID,docTitle,termFreq,positionsButAString,summary);
+            return String.Format("Document ID: {0}\nDocument Title: {1}\nTerm Frequency: {2}\nPosition(s) in Document: {3}\nSummary in Document: {4}\n",docID,docTitle,termFreq,positionsButAString,summary);
         }
     }
 }
