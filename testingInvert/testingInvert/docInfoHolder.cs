@@ -11,27 +11,54 @@ namespace testingInvert
         private string docID { get; set; }
         private string docTitle { get; set; }
         private string termFreq { get; set; }
-        private string positions { get; set; }
+        private int[] positions { get; set; }
+        private string positionsButAString { get; set; }
         private string summary { get; set; }
-        private string fullAbstract { get; set; }
+        private string[] fullAbstract { get; set; }
 
         public docInfoHolder(string _docID, string _docTitle, string _termFreq,  string _positions, string _fullAbstract)
         {
             docID = _docID;
             docTitle = _docTitle;
             termFreq = _termFreq;
-            positions = _positions;
-            fullAbstract = _fullAbstract;
+            positionsButAString = _positions;
+            if (_positions.Contains(','))
+            {
+                string[] positionsArray = _positions.Split(',');
+                positions = new int[positionsArray.Length];
+                for (int i = 0; i < positionsArray.Length; i++)
+                {
+                    positions[i] = Convert.ToInt32(positionsArray[i])-1;
+                }
+            }
+            else
+            {
+                positions = new int[1];
+                positions[0] = Convert.ToInt32(_positions)-1;
+            }
+            fullAbstract = _fullAbstract.Split(' ');
         }
         private void abstractToSummary()
         {
-            //Needs to find the words 5 before and after each position (position is an array of integers divided by commas, or just a single integer)
+            summary = "";
+            foreach (int wordLocation in positions)
+            {
+                int startReadingHere = wordLocation - 5;
+                if (startReadingHere + 10 > fullAbstract.Length) { startReadingHere = fullAbstract.Length - 10; }
+                if (startReadingHere < 0) { startReadingHere = 0; }
+                if (startReadingHere != 0) { summary = summary + "..."; }
+                for (int i = startReadingHere; i < fullAbstract.Length; i++)
+                {
+                    summary = summary + " " + fullAbstract[i];
+                    if (i == startReadingHere + 10) { break; }
+                }
+            }
+            
         }
 
         public string printOut()
         {
-            //Needs to return a string of all the relevant info. Divide multiple summaries with "..."
-            return "";
+            return String.Format("Document ID: {0}\nDocument Title: {1}\nTerm Frequency: {2}\nPositions in Document: {3}\nSummary in Document: {4}\n",docID,docTitle,termFreq,positionsButAString,summary);
         }
     }
 }

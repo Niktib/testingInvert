@@ -10,28 +10,27 @@ namespace testingInvert
 {
     class searchingData
     {
-        private string[] docArray;
-        private string[] dictionaryArray;
-        private string[] postingArray;
+        static private string[] docArray;
+        static private string[] dictionaryArray;
+        static private string[] postingArray;
 
         private int termID { get; set; }
 
         public searchingData()
         {
-            string[] docArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\cacm.all").ToArray();
-            string[] dictionaryArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\dictionary.txt").ToArray();
-            string[] postingArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\postings").ToArray();
+            docArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\cacm.all").ToArray();
+            dictionaryArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\dictionary.txt").ToArray();
+            postingArray = File.ReadAllLines(AppDomain.CurrentDomain.BaseDirectory + "\\postings.txt").ToArray();
 
         }
 
-        public string findDocID(string term)
+        public List<docInfoHolder> findDocID(string term)
         {
             for (int i = 0; i < dictionaryArray.Length; i++)
             {
                 if (dictionaryArray[i].Split(' ')[0] == term.ToLower()) { termID = i; }
             }
-
-            return "";
+            return grabDocumentInfo();
         }
         private List<docInfoHolder> grabDocumentInfo()
         {
@@ -39,9 +38,9 @@ namespace testingInvert
             string[] infoArray = postingArray[termID].Split('|');
             string[] postBreakdown;
             int startOfDocument;
-            foreach (string entry in infoArray)
+            for(int i = 0; i < infoArray.Length-1; i++)
             {
-                postBreakdown = entry.Split('\t');
+                postBreakdown = infoArray[i].Split('\t');
                 startOfDocument = documentSearcher(postBreakdown[0]);
                 finalList.Add(new docInfoHolder(postBreakdown[0], titleFinder(startOfDocument), postBreakdown[1], postBreakdown[2], abstractFinder(startOfDocument)));
             }

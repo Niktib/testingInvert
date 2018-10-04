@@ -13,15 +13,19 @@ namespace testingInvert
     public partial class Form1 : Form
     {
 
+        searchingData dataSearcher = new searchingData();
         public Form1()
         {
             InitializeComponent();
-
         }
 
         private void startButton_Click(object sender, EventArgs e)
         {
-
+            List<docInfoHolder> allFoundInfo = dataSearcher.findDocID(termBox.Text);
+            int i = 1;
+            foreach (var foundDocument in allFoundInfo)
+                Console.WriteLine("Document " + i++ + "\n" + foundDocument.printOut());
+            Console.ReadLine();
         }
     }
 }
