@@ -26,10 +26,15 @@ namespace testingInvert
 
         public List<docInfoHolder> findDocID(string term)
         {
+            termID = -1;
             for (int i = 0; i < dictionaryArray.Length; i++)
             {
-                if (dictionaryArray[i].Split(' ')[0] == term.ToLower()) { termID = i; }
+                if (dictionaryArray[i].Split(' ')[0] == term.ToLower())
+                {
+                    termID = i;
+                }
             }
+            if (termID == -1) { return null; }
             return grabDocumentInfo();
         }
         private List<docInfoHolder> grabDocumentInfo()
@@ -38,7 +43,7 @@ namespace testingInvert
             string[] infoArray = postingArray[termID].Split('|');
             string[] postingBreakdown, titleAndAbstractBreakdown;
             int docID;
-            for(int i = 0; i < infoArray.Length-1; i++)
+            for(int i = 0; i <  infoArray.Length-1; i++)
             {
                 postingBreakdown = infoArray[i].Split('\t');
                 docID = Convert.ToInt32(postingBreakdown[0]) - 1;

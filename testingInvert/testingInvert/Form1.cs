@@ -12,33 +12,53 @@ namespace testingInvert
 {
     public partial class Form1 : Form
     {
-        List<double> timeTaken;
+        List<double> secondsTaken;
         searchingData dataSearcher = new searchingData();
         AnswerBox startUp;
+
         public Form1()
         {
             InitializeComponent();
-            timeTaken = new List<double>();
+            secondsTaken = new List<double>();
         }
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            startUp = new AnswerBox();
-            startUp.Visible = true;
             DateTime timeStart = DateTime.Now;
             List<docInfoHolder> allFoundInfo = dataSearcher.findDocID(termBox.Text);
-            List<string> allStringsFound = new List<string>();
-            int i = 1;
-            foreach (var foundDocument in allFoundInfo)
+            if (allFoundInfo != null)
             {
-                string[] thisIsStupid = ("Document " + i++ + "\n" + foundDocument.printOut()).Split('\n');
-                foreach (string parts in thisIsStupid)
+                startUp = new AnswerBox();
+                startUp.Visible = true;
+                List<string> allStringsFound = new List<string>();
+                int i = 1;
+                foreach (var foundDocument in allFoundInfo)
                 {
-                    allStringsFound.Add(parts);
+                    string[] thisIsStupid = ("Document " + i++ + "\n" + foundDocument.printOut()).Split('\n');
+                    foreach (string parts in thisIsStupid)
+                    {
+                        allStringsFound.Add(parts);
+                    }
                 }
+                startUp.infoShown(allStringsFound);
+                secondsTaken.Add((DateTime.Now - timeStart).TotalMilliseconds);
+                MessageBox.Show(String.Format("It took {0} Milliseconds to find your documents", secondsTaken.LastOrDefault().ToString()));
             }
-            startUp.infoShown(allStringsFound);
-            timeTaken.Add((timeStart - DateTime.Now).TotalMinutes);
+            else
+            {
+                MessageBox.Show("Could not find your exact term");
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            double TotalTime = 0;
+            foreach (double i in secondsTaken)
+            {
+                TotalTime += i;
+            }
+            double averageTime = TotalTime / secondsTaken.Count;
+            MessageBox.Show(String.Format("It took {0} Milliseconds on average to find your documents", averageTime.ToString()));
         }
     }
 }
