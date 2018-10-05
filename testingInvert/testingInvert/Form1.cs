@@ -25,28 +25,36 @@ namespace testingInvert
         private void startButton_Click(object sender, EventArgs e)
         {
             DateTime timeStart = DateTime.Now;
-            List<docInfoHolder> allFoundInfo = dataSearcher.findDocID(termBox.Text);
-            if (allFoundInfo != null)
+            if (termBox.Text.Split(' ').Length == 1 && termBox.Text != "")
             {
-                startUp = new AnswerBox();
-                startUp.Visible = true;
-                List<string> allStringsFound = new List<string>();
-                int i = 1;
-                foreach (var foundDocument in allFoundInfo)
+                List<docInfoHolder> allFoundInfo = dataSearcher.findDocID(termBox.Text);
+                if (allFoundInfo != null)
                 {
-                    string[] thisIsStupid = ("Document " + i++ + "\n" + foundDocument.printOut()).Split('\n');
-                    foreach (string parts in thisIsStupid)
+                    startUp = new AnswerBox();
+                    startUp.Visible = true;
+                    List<string> allStringsFound = new List<string>();
+                    int i = 1;
+                    foreach (var foundDocument in allFoundInfo)
                     {
-                        allStringsFound.Add(parts);
+                        string[] thisIsStupid = ("Document " + i++ + "\n" + foundDocument.printOut()).Split('\n');
+                        foreach (string parts in thisIsStupid)
+                        {
+                            allStringsFound.Add(parts);
+                        }
                     }
+                    startUp.infoShown(allStringsFound);
+                    secondsTaken.Add((DateTime.Now - timeStart).TotalMilliseconds);
+                    MessageBox.Show(String.Format("It took {0} Milliseconds to find your documents", secondsTaken.LastOrDefault().ToString()));
                 }
-                startUp.infoShown(allStringsFound);
-                secondsTaken.Add((DateTime.Now - timeStart).TotalMilliseconds);
-                MessageBox.Show(String.Format("It took {0} Milliseconds to find your documents", secondsTaken.LastOrDefault().ToString()));
+                else
+                {
+                    MessageBox.Show("Could not find your exact term");
+                }
+
             }
             else
             {
-                MessageBox.Show("Could not find your exact term");
+                MessageBox.Show("Put one word please");
             }
         }
 
@@ -58,6 +66,7 @@ namespace testingInvert
                 TotalTime += i;
             }
             double averageTime = TotalTime / secondsTaken.Count;
+            if (secondsTaken.Count < 1) { averageTime = 0; }
             MessageBox.Show(String.Format("It took {0} Milliseconds on average to find your documents", averageTime.ToString()));
         }
     }

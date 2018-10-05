@@ -37,9 +37,8 @@
             // termBox
             // 
             this.termBox.Location = new System.Drawing.Point(15, 37);
-            this.termBox.Multiline = true;
             this.termBox.Name = "termBox";
-            this.termBox.Size = new System.Drawing.Size(141, 62);
+            this.termBox.Size = new System.Drawing.Size(141, 20);
             this.termBox.TabIndex = 0;
             // 
             // label1
@@ -54,7 +53,7 @@
             // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(15, 105);
+            this.startButton.Location = new System.Drawing.Point(15, 63);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(141, 26);
             this.startButton.TabIndex = 2;
@@ -64,7 +63,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(15, 138);
+            this.button1.Location = new System.Drawing.Point(16, 95);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(140, 23);
             this.button1.TabIndex = 3;
@@ -76,7 +75,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(176, 173);
+            this.ClientSize = new System.Drawing.Size(176, 128);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.label1);
