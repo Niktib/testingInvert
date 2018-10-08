@@ -15,6 +15,7 @@ namespace testingInvert
         List<double> secondsTaken;
         searchingData dataSearcher = new searchingData();
         AnswerBox startUp;
+        static PorterStemming ps;
 
         public Form1()
         {
@@ -24,10 +25,13 @@ namespace testingInvert
 
         private void startButton_Click(object sender, EventArgs e)
         {
+            string searchTerm = termBox.Text;
             DateTime timeStart = DateTime.Now;
-            if (termBox.Text.Split(' ').Length == 1 && termBox.Text != "")
+            if (searchTerm.Split(' ').Length == 1 && searchTerm != "")
             {
-                List<docInfoHolder> allFoundInfo = dataSearcher.findDocID(termBox.Text);
+                ps = new PorterStemming();
+                if (checkBox1.Checked) { searchTerm = ps.StemWord(termBox.Text); }
+                List<docInfoHolder> allFoundInfo = dataSearcher.findDocID(searchTerm);
                 if (allFoundInfo != null)
                 {
                     startUp = new AnswerBox();
