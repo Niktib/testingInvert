@@ -63,6 +63,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="searchingData.cs" />
+    <Compile Include="StopWords.cs" />
     <EmbeddedResource Include="AnswerBox.resx">
       <DependentUpon>AnswerBox.cs</DependentUpon>
     </EmbeddedResource>

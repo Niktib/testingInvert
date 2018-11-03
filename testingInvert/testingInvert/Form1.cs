@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -12,7 +13,6 @@ namespace testingInvert
 {
     public partial class Form1 : Form
     {
-        List<double> secondsTaken;
         searchingData dataSearcher = new searchingData();
         AnswerBox startUp;
         static PorterStemming ps;
@@ -20,58 +20,59 @@ namespace testingInvert
         public Form1()
         {
             InitializeComponent();
-            secondsTaken = new List<double>();
         }
 
         private void startButton_Click(object sender, EventArgs e)
-        {
-            string searchTerm = termBox.Text;
-            DateTime timeStart = DateTime.Now;
-            if (searchTerm.Split(' ').Length == 1 && searchTerm != "")
+        {            
+            ps = new PorterStemming();
+            StopWords sw = new StopWords();
+            List<string> termFixing = new List<string>();
+            string[] StringArray = termBox.Text.ToLower().Replace(".", "").Replace(",", "").Replace("!", "").Replace("?", "").Replace("(", "").Replace(")", "").Replace("=", "").Replace('\n', ' ').Split(' ');
+            foreach (string SingleTerms in StringArray)
             {
-                ps = new PorterStemming();
-                if (checkBox1.Checked) { searchTerm = ps.StemWord(termBox.Text); }
-                List<docInfoHolder> allFoundInfo = dataSearcher.findDocID(searchTerm);
-                if (allFoundInfo != null)
+                if (!StopBox.Checked || (StopBox.Checked && !sw.StopMatching(SingleTerms)))
                 {
-                    startUp = new AnswerBox();
-                    startUp.Visible = true;
-                    List<string> allStringsFound = new List<string>();
-                    int i = 1;
-                    foreach (var foundDocument in allFoundInfo)
+                    if (checkBox1.Checked)
                     {
-                        string[] thisIsStupid = ("Document " + i++ + "\n" + foundDocument.printOut()).Split('\n');
-                        foreach (string parts in thisIsStupid)
-                        {
-                            allStringsFound.Add(parts);
-                        }
+                        termFixing.Add(ps.StemWord(SingleTerms));
                     }
-                    startUp.infoShown(allStringsFound);
-                    secondsTaken.Add((DateTime.Now - timeStart).TotalMilliseconds);
-                    MessageBox.Show(String.Format("It took {0} Milliseconds to find your documents", secondsTaken.LastOrDefault().ToString()));
+                    else if (SingleTerms != "")
+                    {
+                        termFixing.Add(SingleTerms);
+                    }
                 }
-                else
-                {
-                    MessageBox.Show("Could not find your exact term");
-                }
+            }
+            string terms = " " + String.Join(" ", termFixing.ToArray()) + " ";
+            List<int> QueryVector = new List<int>();
+            List<string> QueryTerms = new List<string>();
+            termFixing.Sort();
+            while (termFixing.Count > 0)
+            { 
+                QueryVector.Add(Regex.Matches(terms, String.Format(" {0} ", termFixing[0])).Count);
+                QueryTerms.Add(termFixing[0]);
+                for (int i = 0; i < QueryVector.LastOrDefault(); i++) { termFixing.Remove(termFixing[0]); }
+            }
 
-            }
-            else
+            SortedDictionary<double, List<int>> FinalNumbers = dataSearcher.FindFinalVectors(QueryVector.ToArray(), QueryTerms.ToArray());
+            terms = "";
+            startUp = new AnswerBox();
+            startUp.Visible = true;
+            List<string> allStringsFound = new List<string>();
+            var items = from pair in FinalNumbers
+                        orderby pair.Key descending
+                        select pair;
+            
+            foreach (KeyValuePair<double, List<int>> pair in items)
             {
-                MessageBox.Show("Put one word please");
+                Console.WriteLine("{0}: {1}", pair.Key, pair.Value);
             }
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            double TotalTime = 0;
-            foreach (double i in secondsTaken)
+            allStringsFound.Add("Documents in Relevancy Order: \n");
+            allStringsFound.Add("Doc \t\t\t Relevancy Score \n");
+            foreach (KeyValuePair<double, List<int>> pair in items)
             {
-                TotalTime += i;
+                allStringsFound.Add(String.Format("{0}:\t\t {1}\n", String.Join(", ", pair.Value.ToArray()), pair.Key));
             }
-            double averageTime = TotalTime / secondsTaken.Count;
-            if (secondsTaken.Count < 1) { averageTime = 0; }
-            MessageBox.Show(String.Format("It took {0} Milliseconds on average to find your documents", averageTime.ToString()));
+            startUp.infoShown(allStringsFound);
         }
     }
 }
